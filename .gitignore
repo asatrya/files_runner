@@ -2,3 +2,7 @@ Include/
 Lib/
 Scripts/
 tcl/
+*.pyc
+user_defined/*.py
+!user_defined/__init__.py
+!user_defined/copy.py
