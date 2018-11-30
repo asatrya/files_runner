@@ -80,7 +80,7 @@ def main():
 				process_output_file = eval('{}.process_file("{}", "{}")'.format(args.process, tempFileFullPath, outputDirFullPath))
 				print("\tWritten to {}".format(process_output_file))
 
-				# next: upload to GCS
+				# upload to GCS
 				if(args.gcs_upload_bucket is not None):
 					blob_name = file_helpers.remove_leading_slash(process_output_file.replace("//", "/").replace(outputDir, ""))
 					gcs_helpers.upload_blob(args.gcs_upload_bucket, process_output_file, blob_name)
@@ -105,7 +105,10 @@ def main():
 					process_output_file = eval('{}.process_file("{}", "{}")'.format(args.process, fullPathFileName, outputDirFullPath))
 					print("\tWrite to {}".format(process_output_file))
 
-					# next: upload to GCS
+					# upload to GCS
+					if(args.gcs_upload_bucket is not None):
+						blob_name = file_helpers.remove_leading_slash(process_output_file.replace("//", "/").replace(outputDir, ""))
+						gcs_helpers.upload_blob(args.gcs_upload_bucket, process_output_file, blob_name)
 
 if __name__ == '__main__':
 	sys.exit(main())
