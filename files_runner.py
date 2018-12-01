@@ -2,6 +2,7 @@ import sys
 import os
 import argparse
 import re
+import collections
 
 from user_defined import *
 from utils import file_helpers
@@ -16,7 +17,10 @@ python .\gcs_selective_upload.py --source ./<source-folder> --match-regex "^(.)+
 """
 
 # current version
-VERSION = '0.0.2'
+VERSION = '0.0.3'
+
+# data structure
+Args = collections.namedtuple("Args", ['source', 'temp_dir', 'output_dir', 'match_regex'])
 
 def main():
 	# parameter
@@ -39,11 +43,15 @@ def main():
 					help=("User defined file process. Defined as a .py file name with 'process_file' function in it. Default: copy"))
 	args = parser.parse_args()
 
-	# main code
+	# arguments
 	sourceDir = file_helpers.remove_trailing_slash(args.source.replace("\\", "/"))
 	tempDir = file_helpers.remove_trailing_slash(args.temp_dir.replace("\\", "/"))
 	outputDir = file_helpers.remove_trailing_slash(args.output_dir.replace("\\", "/"))
 	matchRegex = args.match_regex.decode('string_escape')
+	args_tuple = Args(source=sourceDir, temp_dir=tempDir, output_dir=outputDir, match_regex=matchRegex)
+
+	# variables
+	process_counter = 0
 
 	# source is on GCS
 	if(re.match("^gs://(.+)", sourceDir)):
@@ -74,11 +82,9 @@ def main():
 				# process and write to output directory
 				outputFileFullPath = file_helpers.join_path_segment("/", outputDir, blob.name.replace(prefix, ""))
 				outputDirFullPath = outputFileFullPath[:outputFileFullPath.rfind('/')]
-				if not os.path.exists(outputDirFullPath):
-					os.makedirs(outputDirFullPath)
 				
-				process_output_file = eval('{}.process_file("{}", "{}")'.format(args.process, tempFileFullPath, outputDirFullPath))
-				print("\tWritten to {}".format(process_output_file))
+				process_output_file = eval('{}.process_file({}, {}, "{}", "{}")'.format(args.process, process_counter, args_tuple, tempFileFullPath, outputDirFullPath))
+				process_counter += 1
 
 				# upload to GCS
 				if(args.gcs_upload_bucket is not None):
@@ -102,8 +108,8 @@ def main():
 					if not os.path.exists(outputDirFullPath):
 						os.makedirs(outputDirFullPath)
 						
-					process_output_file = eval('{}.process_file("{}", "{}")'.format(args.process, fullPathFileName, outputDirFullPath))
-					print("\tWrite to {}".format(process_output_file))
+					process_output_file = eval('{}.process_file({}, {}, "{}", "{}")'.format(args.process, process_counter, args_tuple, fullPathFileName, outputDirFullPath))
+					process_counter += 1
 
 					# upload to GCS
 					if(args.gcs_upload_bucket is not None):

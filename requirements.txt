@@ -1,1 +1,5 @@
 google-cloud-storage
+xlrd
+xlwt
+pandas
+numpy
