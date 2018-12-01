@@ -1,8 +1,14 @@
 Include/
+include/
 Lib/
+lib/
 Scripts/
+scripts/
 tcl/
+bin/
+local/
+share/
 *.pyc
-user_defined/*.py
+user_defined/
 !user_defined/__init__.py
 !user_defined/copy.py
