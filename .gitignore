@@ -3,6 +3,6 @@ Lib/
 Scripts/
 tcl/
 *.pyc
-user_defined/*
+user_defined/
 !user_defined/__init__.py
 !user_defined/copy.py
