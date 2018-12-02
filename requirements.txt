@@ -3,3 +3,4 @@ xlrd
 xlwt
 pandas
 numpy
+lxml
