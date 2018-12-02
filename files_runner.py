@@ -105,8 +105,6 @@ def main():
 					# process and write to output directory
 					outputFileFullPath = file_helpers.join_path_segment("/", outputDir, fullPathFileName.replace(sourceDir, ""))
 					outputDirFullPath = outputFileFullPath[:outputFileFullPath.rfind('/')]
-					if not os.path.exists(outputDirFullPath):
-						os.makedirs(outputDirFullPath)
 						
 					process_output_file = eval('{}.process_file({}, {}, "{}", "{}")'.format(args.process, process_counter, args_tuple, fullPathFileName, outputDirFullPath))
 					process_counter += 1
